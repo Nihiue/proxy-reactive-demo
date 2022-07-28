@@ -1,29 +1,31 @@
 
-const proxyMap = new WeakMap();
 import { track, trigger } from './track';
+const proxyMap = new WeakMap();
 
-export function reactive<T extends object>(obj: T) {
+function createProxy<T extends object>(obj: T) {
+  const proxy = new Proxy<T>(obj, {
+    get(target, key, receiver) {
+      track(target, key);
+      return reactive(Reflect.get(target, key, receiver));
+    },
+    set(target, key, value) {
+      Reflect.set(target, key, value);
+      trigger(target, key);
+      return true;
+    }
+  });
+  proxyMap.set(obj, proxy);
+  return proxy;
+}
+
+export function reactive<T extends object>(obj: T): T {
   if (typeof obj !== 'object') {
     return obj;
   }
-  let ret = proxyMap.get(obj);
-
-  if (!ret) {
-    ret = new Proxy<T>(obj, {
-      get(target, key) {
-        track(target, key);
-        return reactive(Reflect.get(obj, key));
-      },
-      set(target, key, value) {
-        Reflect.set(obj, key, value);
-        trigger(target, key);
-        return true;
-      }
-    });
-    proxyMap.set(obj, ret);
+  if (!proxyMap.has(obj)) {
+    proxyMap.set(obj, createProxy(obj));
   }
-
-  return ret;
+  return proxyMap.get(obj);
 }
 
 export function ref(value?: any) {

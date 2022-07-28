@@ -11,8 +11,7 @@ const myObj = reactive({
 
 const v = ref();
 
-watchEffect(() => {
-  myObj.c.c;
+const myEffect = watchEffect(() => {
   console.log(`a + b is ${myObj.a + myObj.b}`);
   console.log(`d[0] is ${myObj.d[0]}`);
 });
@@ -20,8 +19,7 @@ watchEffect(() => {
 myObj.a = 2;
 
 setInterval(() => {
-  // myObj.a += 1;
-  myObj.c.c += 1;
+  myObj.a += 1;
   myObj.d[0] += 1;
 }, 1000);
 

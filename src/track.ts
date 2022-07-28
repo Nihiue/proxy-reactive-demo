@@ -22,4 +22,5 @@ export function watchEffect(update: Function) {
     activeEffect = undefined;
   }
   effect();
+  return effect;
 }

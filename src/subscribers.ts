@@ -1,6 +1,6 @@
 export type KeyType = string | symbol | number;
 
-type ObjectSubMap = Map<KeyType, Set<Function>>
+type ObjectSubMap = Map<KeyType, Set<Function>>;
 
 const subscribers: WeakMap<Object, ObjectSubMap> = new WeakMap();
 
