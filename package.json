@@ -1,0 +1,15 @@
+{
+  "name": "proxy-reactive-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "tsc -d && node lib/test/index.js",
+    "build": "tsc -d"
+  },
+  "author": "nihiue@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^4.7.4"
+  }
+}
