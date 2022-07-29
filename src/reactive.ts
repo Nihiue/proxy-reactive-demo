@@ -28,16 +28,10 @@ export function reactive<T extends object>(obj: T): T {
   return proxyMap.get(obj);
 }
 
-export function ref(value?: any) {
-  const refObject = {
-    get value() {
-      track(refObject, 'value');
-      return value;
-    },
-    set value(newValue) {
-      value = newValue;
-      trigger(refObject, 'value');
-    }
-  }
-  return refObject;
+export function ref(initVal?: any) {
+  console.assert(typeof initVal !== 'object', 'should not use ref on object');
+
+  return reactive({
+    value: initVal
+  });
 }
