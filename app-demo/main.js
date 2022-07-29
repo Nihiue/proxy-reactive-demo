@@ -5,16 +5,23 @@ import { frameworkInit } from './framework/index';
 function setup() {
   const data = reactive({
     name: 'guest',
-    age: '12',
+    birthYear: 1992,
     errorReason: ''
   });
 
   const methods = {
-    countNameLength() {
-      return data.name.length;
+    calcAge() {
+      return (new Date()).getFullYear() - data.birthYear;
     },
     generateRandomName() {
       data.name = Math.round(Math.random() * 0xfffff).toString(16);
+    },
+    getBirthYearOptions() {
+      const arr = [];
+      for (let i = 1980; i < 2025; i += 1) {
+        arr.push(`<option value="${i}">${i}</option>`);
+      }
+      return arr.join('\n');
     }
   };
 

@@ -31,10 +31,14 @@ body {
 }
 
 .image-div {
-  width: 200px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
   margin: 20px auto;
+}
+
+input, select, button {
+  padding: 2px 8px;
 }
