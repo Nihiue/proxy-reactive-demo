@@ -1,23 +1,38 @@
 import { toCamelcase } from './utils';
 
+function renderFunction({ args, body, values }, appThis) {
+
+  // args: 新函数的形参
+  // body: 新函数的函数体
+  // values: 绑定到形参的值
+
+  // 这里自动添加了一个新的形参 { methods, data },  并且给其提供值为 appThis
+  // 目的是在模板函数中可以不通过 this 直接访问这两个属性，使得模板更加干净
+
+  return new Function('{ methods, data }', ...args, body).bind(appThis, appThis, ...values);
+}
+
 function handleBind(appThis, registerRender, el, attr) {
   let [ prefix, propName ] = attr.split(':');
   const attrVal = el.getAttribute(attr);
   propName = toCamelcase(propName);
 
-  let func;
+  const funcOpt = {
+    args: ['$el'],
+    body: `$el.${propName} = ${attrVal}`,
+    values: [ el ]
+  };
 
   if (propName === 'class') {
     // 特殊处理 bind:class
-    func = new Function('$el', `
-     const classDict = ${attrVal};
-     Object.keys(classDict).forEach(function (className) {
-       $el.classList[classDict[className] ? 'add' : 'remove'](className);
-     });
-    `).bind(appThis, el)
-  } else {
-    func = new Function('$el', `$el.${propName} = ${attrVal}`).bind(appThis, el);
+    funcOpt.body = `
+      const classDict = ${attrVal};
+      Object.keys(classDict).forEach(function (className) {
+        $el.classList[classDict[className] ? 'add' : 'remove'](className);
+      });
+   `;
   }
+  const func = renderFunction(funcOpt, appThis);
   if (prefix.includes('.once')) {
     func();
   } else {
@@ -29,18 +44,33 @@ function handleOn(appThis, registerRender, el, attr) {
   const [ prefix, eventName ] = attr.split(':');
   const attrVal = el.getAttribute(attr);
 
-  el.addEventListener(eventName, new Function('$event', attrVal).bind(appThis));
+  const func = renderFunction({
+    args: [ '$event' ],
+    body: attrVal,
+    values: []
+  }, appThis);
+
+  el.addEventListener(eventName, func);
 }
 
 function handleShow(appThis, registerRender, el, attr) {
   const attrVal = el.getAttribute(attr);
-  const func = new Function('$el', `$el.style.display = (${attrVal}) ? 'initial' : 'none'`).bind(appThis, el);
+  const func = renderFunction({
+    args: ['$el'],
+    body: `$el.style.display = (${attrVal}) ? 'initial' : 'none'`,
+    values: [ el ]
+  }, appThis);
+
   registerRender(func, `${attr} => ${attrVal}`);
 }
 
 function handleCustomDirective(appThis, registerRender, el, attr, directiveName) {
   const attrVal = el.getAttribute(attr) || 'null';
-  const func = new Function('$el', `this.directives['${directiveName}']($el, { value: ${attrVal} })`).bind(appThis, el);
+  const func = renderFunction({
+    args: ['$el'],
+    body: `this.directives['${directiveName}']($el, { value: ${attrVal} })`,
+    values: [ el ]
+  }, appThis);
   registerRender(func, `${attr} => ${attrVal}`);
 }
 
