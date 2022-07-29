@@ -22,3 +22,10 @@ body {
 #app > div {
   margin-bottom: 12px;
 }
+.red {
+  color: red;
+}
+
+.blue {
+  color: blue;
+}

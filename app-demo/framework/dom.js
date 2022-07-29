@@ -5,7 +5,19 @@ function handleBind(appThis, registerRender, el, attr) {
   const attrVal = el.getAttribute(attr);
   propName = toCamelcase(propName);
 
-  const func = new Function('$el', `$el.${propName} = ${attrVal}`).bind(appThis, el);
+  let func;
+
+  if (propName === 'class') {
+    // 特殊处理 bind:class
+    func = new Function('$el', `
+     const classDict = ${attrVal};
+     Object.keys(classDict).forEach(function (className) {
+       $el.classList[classDict[className] ? 'add' : 'remove'](className);
+     });
+    `).bind(appThis, el)
+  } else {
+    func = new Function('$el', `$el.${propName} = ${attrVal}`).bind(appThis, el);
+  }
   if (prefix.includes('.once')) {
     func();
   } else {

@@ -12,7 +12,7 @@
       </div>
 
       <div>
-        <h1>Welcome, <span x-bind:text-content="this.data.name"></span></h1>
+        <h1 x-bind:class="{ red: this.data.name.length > 10, blue: this.data.name.length <= 2 }">Welcome, <span x-bind:text-content="this.data.name"></span></h1>
       </div>
 
       <div>

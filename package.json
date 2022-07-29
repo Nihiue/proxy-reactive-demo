@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev:demo": "cd app-demo && npm run dev",
     "test": "tsc -d && node lib/test/index.js",
     "build": "tsc -d"
   },
