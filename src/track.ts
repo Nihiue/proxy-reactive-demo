@@ -14,10 +14,11 @@ const nextTickSubs: Set<Function> = new Set();
 
 const tickTimer = window.setInterval(function() {
   const arr = Array.from(nextTickSubs);
+  nextTickSubs.clear();
+
   arr.forEach(function (sub) {
     sub();
   });
-  nextTickSubs.clear();
 }, 100);
 
 export function trigger(target:Object, key: KeyType) {
