@@ -8,6 +8,12 @@ export function frameworkInit(mountSel, app) {
     });
   }
 
+  if (app.directives) {
+    Object.keys(app.directives).forEach(function (name) {
+      app.directives[name] = app.directives[name].bind(app);
+    });
+  }
+
   if (app.watch) {
     Object.keys(app.watch).forEach(function (val) {
       const func = new Function(`this.watch['${val}'](${val})`).bind(app);

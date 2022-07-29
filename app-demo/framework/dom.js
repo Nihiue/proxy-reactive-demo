@@ -38,6 +38,12 @@ function handleShow(appThis, registerRender, el, attr) {
   registerRender(func);
 }
 
+function handleCustomDirective(appThis, registerRender, el, attr, directiveName) {
+  const attrVal = el.getAttribute(attr) || 'null';
+  const func = new Function('$el', `this.directives['${directiveName}']($el, { value: ${attrVal} })`).bind(appThis, el);
+  registerRender(func);
+}
+
 export function initDom(rootEl, appThis) {
   const renderFuncArray = [];
 
@@ -51,14 +57,25 @@ export function initDom(rootEl, appThis) {
     'x-show': handleShow
   };
 
+  const customDirectives = appThis.directives || {};
+
   Array.from(rootEl.querySelectorAll('*')).forEach(function (el) {
     el.getAttributeNames().forEach(function(attr) {
+      if (!attr.startsWith('x-')) {
+        return;
+      }
+
       Object.keys(attrHandlers).forEach(function(prefix) {
         if (attr.startsWith(prefix)) {
           attrHandlers[prefix](appThis, registerRender, el, attr);
           el.removeAttribute(attr);
         }
       });
+
+      if (customDirectives[attr.slice(2)]) {
+        handleCustomDirective(appThis, registerRender, el, attr, attr.slice(2));
+        el.removeAttribute(attr);
+      }
     });
   });
 

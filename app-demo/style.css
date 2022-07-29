@@ -13,14 +13,14 @@ body {
 }
 
 #app {
-  max-width: 1280px;
+  padding-top: 10vh;
+  max-width: 750px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }
 
 #app > div {
-  margin-bottom: 12px;
+  margin-bottom: 24px;
 }
 .red {
   color: red;
@@ -28,4 +28,13 @@ body {
 
 .blue {
   color: blue;
+}
+
+.image-div {
+  width: 200px;
+  height: 200px;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  margin: 20px auto;
 }
