@@ -9,8 +9,10 @@ function createProxy<T extends object>(obj: T) {
       return reactive(Reflect.get(target, key, receiver));
     },
     set(target, key, value) {
-      Reflect.set(target, key, value);
-      trigger(target, key);
+      if (Reflect.get(target, key) !== value) {
+        Reflect.set(target, key, value);
+        trigger(target, key);
+      }
       return true;
     }
   });

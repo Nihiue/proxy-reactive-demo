@@ -1,4 +1,4 @@
-import { reactive, ref, watchEffect } from '../src';
+import { reactive, ref, watchEffect } from '../src/index';
 
 const myObj = reactive({
   a: 1,

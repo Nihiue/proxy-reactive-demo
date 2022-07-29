@@ -6,7 +6,28 @@
     <title>My App</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <div>
+        Input your name: <input type="text" x-bind:value="this.data.name" x-on:input="this.data.name=$event.target.value">
+      </div>
+
+      <div>
+        <h1>Welcome, <span x-bind:text-content="this.data.name"></span></h1>
+      </div>
+
+      <div>
+        The length of you name is <span x-bind:text-content="this.methods.countNameLength()"></span>
+      </div>
+
+      <div>
+        <button type="button" x-on:click="this.methods.generateRandomName()">Generate Random Name</button>
+      </div>
+
+      <div x-show="this.data.name.length > 10">
+        Your name is really long
+      </div>
+
+    </div>
     <script type="module" src="/main.js"></script>
   </body>
 </html>
