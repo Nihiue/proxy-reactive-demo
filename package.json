@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev:demo": "cd app-demo && npm run dev",
+    "dev:demo": "npm run build && cd app-demo && npm run dev",
     "test": "tsc -d && node lib/test/index.js",
     "build": "tsc -d"
   },
@@ -12,5 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "typescript": "^4.7.4"
+  },
+  "devDependencies": {
+    "vite": "^3.0.0"
   }
 }
