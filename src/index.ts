@@ -1,8 +1,8 @@
-import { reactive, ref } from './reactive';
-import { watchEffect } from './track';
+import { reactive, ref } from './reactive.js';
+import { watchEffect } from './track.js';
 
 export {
-  reactive, 
-  ref, 
+  reactive,
+  ref,
   watchEffect
 };

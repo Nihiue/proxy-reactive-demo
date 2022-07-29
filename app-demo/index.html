@@ -57,7 +57,7 @@
           Your are
           <!-- methods as computed -->
           <span x-bind:text-content="methods.calcAge()"></span>
-          Years old.
+          years old.
         </div>
       </div>
 
@@ -79,6 +79,18 @@
             width: data.height + 'px',
             height: data.height + 'px',
           }"></div>
+      </div>
+
+       <!-- nested object -->
+      <div>
+        Nested Object Value
+        <button type="button" x-on:click="data.nestedObj.value -= 1">
+          -
+        </button>
+        <span x-bind:text-content="data.nestedObj.value"></span>
+        <button type="button" x-on:click="data.nestedObj.value += 1">
+          +
+        </button>
       </div>
     </div>
     <script type="module" src="/main.js"></script>

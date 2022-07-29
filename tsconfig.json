@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-      "outDir": "lib",
-      // "module": "commonjs",
+      "outDir": "dist",
+      "module": "ES2020",
       "target": "es2019",
       "noImplicitAny": true,
       "removeComments": true,

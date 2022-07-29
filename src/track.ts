@@ -1,6 +1,20 @@
-import { getSubscribersSet, KeyType } from './subscribers';
+import { getSubscribersSet, KeyType } from './subscribers.js';
 
 let activeEffect: Function | undefined;
+
+const TickInterval = 100;
+const appStartTime = Date.now();
+const nextTickSubs: Set<Function> = new Set();
+
+setInterval(function() {
+  const arr = Array.from(nextTickSubs);
+  nextTickSubs.clear();
+
+  arr.forEach(function (effect) {
+    effect();
+  });
+}, TickInterval);
+
 
 export function track(target: Object, key: KeyType) {
   if (!activeEffect) {
@@ -10,24 +24,15 @@ export function track(target: Object, key: KeyType) {
   subscribers.add(activeEffect);
 }
 
-const nextTickSubs: Set<Function> = new Set();
-
-const tickTimer = window.setInterval(function() {
-  const arr = Array.from(nextTickSubs);
-  nextTickSubs.clear();
-
-  arr.forEach(function (sub) {
-    sub();
-  });
-}, 100);
-
 export function trigger(target:Object, key: KeyType) {
-  getSubscribersSet(target, key).forEach(function(sub) {
-    nextTickSubs.add(sub);
-  });
-}
+  const effects = getSubscribersSet(target, key);
 
-const appStartTime = Date.now();
+  effects.forEach(function(effect) {
+    nextTickSubs.add(effect);
+  });
+
+  effects.clear();
+}
 
 export function watchEffect(update: any) {
   const effect = function () {

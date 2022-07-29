@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev:demo": "npm run build && cd app-demo && npm run dev",
-    "test": "tsc -d && node lib/test/index.js",
+    "test": "tsc -d && node dist/test/index.js",
     "build": "tsc -d"
   },
   "author": "nihiue@gmail.com",

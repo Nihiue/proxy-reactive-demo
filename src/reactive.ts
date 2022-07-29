@@ -1,5 +1,5 @@
 
-import { track, trigger } from './track';
+import { track, trigger } from './track.js';
 const proxyMap = new WeakMap();
 
 function createProxy<T extends object>(obj: T) {

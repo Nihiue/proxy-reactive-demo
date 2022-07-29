@@ -1,4 +1,4 @@
-import { reactive, ref, watchEffect } from '../src/index';
+import { reactive, ref, watchEffect } from '../src/index.js';
 
 const myObj = reactive({
   a: 1,
@@ -11,7 +11,7 @@ const myObj = reactive({
 
 const v = ref();
 
-const myEffect = watchEffect(() => {
+watchEffect(() => {
   console.log(`a + b is ${myObj.a + myObj.b}`);
   console.log(`d[0] is ${myObj.d[0]}`);
 });

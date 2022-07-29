@@ -1,5 +1,5 @@
 import { initDom } from './dom';
-import { watchEffect } from '../../lib/src/index';
+import { watchEffect } from 'proxy-reactive-demo';
 
 function bindHelper(obj, that) {
   if (!obj) {

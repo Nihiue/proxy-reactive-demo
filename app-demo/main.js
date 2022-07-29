@@ -1,5 +1,5 @@
 import './style.css'
-import { reactive } from '../lib/src/index';
+import { reactive } from 'proxy-reactive-demo';
 import { frameworkInit } from './framework/index';
 
 function setup() {
@@ -7,7 +7,10 @@ function setup() {
     name: 'guest',
     birthYear: 1992,
     height: 160,
-    errorReason: ''
+    errorReason: '',
+    nestedObj: {
+      value: 10
+    }
   });
 
   const methods = {
