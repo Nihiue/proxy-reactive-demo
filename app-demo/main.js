@@ -5,6 +5,7 @@ import { frameworkInit } from './framework/index';
 function setup() {
   const data = reactive({
     name: 'guest',
+    age: '12',
     errorReason: ''
   });
 

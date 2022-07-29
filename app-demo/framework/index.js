@@ -1,18 +1,22 @@
 import { initDom } from './dom';
 import { watchEffect } from '../../lib/src/index';
 
-export function frameworkInit(mountSel, app) {
-  if (app.methods) {
-    Object.keys(app.methods).forEach(function (name) {
-      app.methods[name] = app.methods[name].bind(app);
-    });
+function bindHelper(obj, that) {
+  if (!obj) {
+    return;
   }
+  Object.keys(obj).forEach(function (name) {
+    if (typeof obj[name] === 'function') {
+      obj[name] = obj[name].bind(that);
+    }
+  });
+}
 
-  if (app.directives) {
-    Object.keys(app.directives).forEach(function (name) {
-      app.directives[name] = app.directives[name].bind(app);
-    });
-  }
+export function frameworkInit(mountSel, app) {
+
+  bindHelper(app.methods, app);
+  bindHelper(app.directives, app);
+  bindHelper(app.watch, app);
 
   if (app.watch) {
     Object.keys(app.watch).forEach(function (val) {
@@ -22,6 +26,7 @@ export function frameworkInit(mountSel, app) {
   }
 
   const renderFuncs = initDom(document.querySelector(mountSel), app);
+  console.log(renderFuncs);
   renderFuncs.forEach(render => {
     watchEffect(render);
   });

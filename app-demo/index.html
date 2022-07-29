@@ -12,16 +12,22 @@
       </div>
 
       <div>
-        <h1 x-bind:class="{ red: this.data.errorReason === 'long', blue: this.data.errorReason === 'short' }">Welcome, <span x-bind:text-content="this.data.name"></span></h1>
+        Input your age: <input type="number" x-bind:value="this.data.age" x-on:input="this.data.age=$event.target.value">
+      </div>
+
+      <div>
+        <h1 x-bind:class="{ red: this.data.errorReason === 'long', blue: this.data.errorReason === 'short' }">
+          Welcome, <span x-bind:text-content="this.data.name"></span>
+        </h1>
       </div>
 
       <div>
         The length of you name is <span x-bind:text-content="this.methods.countNameLength()"></span>
       </div>
 
-      <div class="image-div" x-img="this.data.errorReason ? '/error.png' : '/ok.png'"></div>
+      <div class="image-div" x-img="this.data.errorReason ? './error.png' : './ok.png'"></div>
 
-      <div x-show="this.data.errorReason">
+      <div x-show="this.data.age < 18">
         <button type="button" x-on:click="this.methods.generateRandomName()">Generate Random Name</button>
       </div>
 

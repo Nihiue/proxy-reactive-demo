@@ -21,7 +21,7 @@ function handleBind(appThis, registerRender, el, attr) {
   if (prefix.includes('.once')) {
     func();
   } else {
-    registerRender(func);
+    registerRender(func, `${attr} => ${attrVal}`);
   }
 }
 
@@ -35,19 +35,20 @@ function handleOn(appThis, registerRender, el, attr) {
 function handleShow(appThis, registerRender, el, attr) {
   const attrVal = el.getAttribute(attr);
   const func = new Function('$el', `$el.style.display = (${attrVal}) ? 'initial' : 'none'`).bind(appThis, el);
-  registerRender(func);
+  registerRender(func, `${attr} => ${attrVal}`);
 }
 
 function handleCustomDirective(appThis, registerRender, el, attr, directiveName) {
   const attrVal = el.getAttribute(attr) || 'null';
   const func = new Function('$el', `this.directives['${directiveName}']($el, { value: ${attrVal} })`).bind(appThis, el);
-  registerRender(func);
+  registerRender(func, `${attr} => ${attrVal}`);
 }
 
 export function initDom(rootEl, appThis) {
   const renderFuncArray = [];
 
-  function registerRender(func) {
+  function registerRender(func, desc = '') {
+    func.effect_debug_info = desc;
     renderFuncArray.push(func);
   }
 

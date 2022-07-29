@@ -14,10 +14,18 @@ export function trigger(target:Object, key: KeyType) {
   getSubscribersSet(target, key).forEach(sub => sub());
 }
 
+const appStartTime = Date.now();
 
-export function watchEffect(update: Function) {
+export function watchEffect(update: any) {
   const effect = function () {
     activeEffect = effect;
+    if (update.effect_debug_info) {
+      console.debug(
+        `+${Math.floor((Date.now() - appStartTime) / 1000)}s`,
+        'effect',
+        update.effect_debug_info
+      );
+    }
     update();
     activeEffect = undefined;
   }
