@@ -27,7 +27,7 @@ function setup() {
   };
 
   const watch = {
-    'this.data.name'(val) {
+    'data.name'(val) {
       if (val.length > 10) {
         data.errorReason = 'long';
       } else if (val.length < 4) {

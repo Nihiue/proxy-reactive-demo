@@ -20,13 +20,13 @@ export function frameworkInit(mountSel, app) {
 
   if (app.watch) {
     Object.keys(app.watch).forEach(function (val) {
-      const func = new Function(`this.watch['${val}'](${val})`).bind(app);
+      const func = new Function(`this.watch['${val}'](this.${val})`).bind(app);
+      func.effect_debug_info = `watch => ${val}`;
       watchEffect(func);
     });
   }
 
   const renderFuncs = initDom(document.querySelector(mountSel), app);
-  console.log(renderFuncs);
   renderFuncs.forEach(render => {
     watchEffect(render);
   });
