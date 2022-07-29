@@ -8,23 +8,44 @@
   <body>
     <div id="app">
       <div>
-        Input your name: <input x-focus type="text" x-bind:value="data.name" x-on:input="data.name=$event.target.value">
+        <!-- customDirective: x-focus -->
+        <!-- x-bind & x-on -->
+        Input your name:
+        <input
+          type="text"
+          x-focus
+          x-bind:value="data.name"
+          x-on:input="data.name=$event.target.value"
+        >
       </div>
 
+      <!-- x-show -->
       <div x-show="data.name.length > 0">
-        <h1 x-bind:class="{ red: data.errorReason === 'long', blue: data.errorReason === 'short' }">
-          Welcome, <span x-bind:text-content="data.name"></span>
+        <!-- x-bind:class -->
+        <h1
+          x-bind:class="{
+            red: data.errorReason === 'long',
+            blue: data.errorReason === 'short'
+          }"
+        >
+          Welcome,
+          <span x-bind:text-content="data.name"></span>
         </h1>
       </div>
 
+      <!-- customDirective: x-img -->
       <div class="image-div" x-img="data.errorReason ? './error.png' : './ok.png'"></div>
 
       <div>
-        <button type="button" x-on:click="methods.generateRandomName()">Generate Random Name</button>
+        <button type="button" x-on:click="methods.generateRandomName()">
+          Generate Random Name
+        </button>
       </div>
 
       <div>
         Year of birth:
+
+        <!-- x-bind.once -->
         <select
           x-bind:value="data.birthYear.toString()"
           x-on:input="data.birthYear=parseInt($event.target.value, 10)"
@@ -33,10 +54,32 @@
         </select>
 
         <div style="margin-top: 20px;">
-          Your are <span x-bind:text-content="methods.calcAge()"></span> Years old.
+          Your are
+          <!-- methods as computed -->
+          <span x-bind:text-content="methods.calcAge()"></span>
+          Years old.
         </div>
       </div>
 
+      <div>
+        Height:
+        <span x-bind:text-content="data.height"></span>
+        <br>
+        <input
+          min="120"
+          max="240"
+          type="range"
+          x-bind.once:value="data.height"
+          x-on:input="data.height=$event.target.value"
+        >
+        <!-- bind:style -->
+        <div
+          class="height-vis"
+          x-bind:style="{
+            width: data.height + 'px',
+            height: data.height + 'px',
+          }"></div>
+      </div>
     </div>
     <script type="module" src="/main.js"></script>
   </body>

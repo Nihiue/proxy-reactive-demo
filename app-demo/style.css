@@ -42,3 +42,9 @@ body {
 input, select, button {
   padding: 2px 8px;
 }
+.height-vis {
+  border-radius: 50%;
+  background: #535bf2;
+  margin: 20px auto;
+  transition: all ease 0.1s;
+}

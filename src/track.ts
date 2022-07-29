@@ -10,8 +10,20 @@ export function track(target: Object, key: KeyType) {
   subscribers.add(activeEffect);
 }
 
+const nextTickSubs: Set<Function> = new Set();
+
+const tickTimer = window.setInterval(function() {
+  const arr = Array.from(nextTickSubs);
+  arr.forEach(function (sub) {
+    sub();
+  });
+  nextTickSubs.clear();
+}, 100);
+
 export function trigger(target:Object, key: KeyType) {
-  getSubscribersSet(target, key).forEach(sub => sub());
+  getSubscribersSet(target, key).forEach(function(sub) {
+    nextTickSubs.add(sub);
+  });
 }
 
 const appStartTime = Date.now();

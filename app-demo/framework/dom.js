@@ -32,6 +32,17 @@ function handleBind(appThis, registerRender, el, attr) {
       });
    `;
   }
+
+  if (propName === 'style') {
+    // 特殊处理 bind:style
+    funcOpt.body = `
+      const styleDict = ${attrVal};
+      $el.style = Object.keys(styleDict).map(function (styleName) {
+        return styleName + ':' + styleDict[styleName];
+      }).join(';');
+   `;
+  }
+
   const func = renderFunction(funcOpt, appThis);
   if (prefix.includes('.once')) {
     func();

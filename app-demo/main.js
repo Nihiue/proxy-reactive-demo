@@ -6,6 +6,7 @@ function setup() {
   const data = reactive({
     name: 'guest',
     birthYear: 1992,
+    height: 160,
     errorReason: ''
   });
 
