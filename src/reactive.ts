@@ -1,5 +1,6 @@
 
 import { track, trigger } from './track.js';
+import { isObject } from './utils.js';
 const proxyMap = new WeakMap();
 
 function createProxy<T extends object>(obj: T) {
@@ -21,7 +22,7 @@ function createProxy<T extends object>(obj: T) {
 }
 
 export function reactive<T extends object>(obj: T): T {
-  if (typeof obj !== 'object') {
+  if (!isObject(obj)) {
     return obj;
   }
   if (!proxyMap.has(obj)) {
@@ -31,7 +32,7 @@ export function reactive<T extends object>(obj: T): T {
 }
 
 export function ref(initVal?: any) {
-  console.assert(typeof initVal !== 'object', 'should not use ref on object');
+  console.assert(!isObject(initVal), 'should not use ref on object');
 
   return reactive({
     value: initVal
