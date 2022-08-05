@@ -4,7 +4,7 @@
 
 设计主要参照了 vue3 的响应式原理文档，相较于官方文档，会更注重探究设计背后的思路以及一些关键的细节
 
-[PDF版本讲义]('./doc/doc.pdf')
+[PDF版本讲义](https://github.com/Nihiue/proxy-reactive-demo/blob/master/doc/doc.pdf)
 
 ## 基于 Proxy 的数据响应式 Reactive 原理及实现
 
