@@ -9,8 +9,7 @@
       "sourceMap": false
   },
   "include": [
-    "src/**/*",
-    "test/**/*"
+    "packages/**/*",
   ],
   "exclude": [
       "node_modules",

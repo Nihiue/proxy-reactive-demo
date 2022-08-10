@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "paths": {
-      "proxy-reactive-demo": ["../dist/src/index"]
+      "x-framework": ["../dist/x-framework/index"]
     }
   }
 }

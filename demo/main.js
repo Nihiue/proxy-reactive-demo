@@ -1,6 +1,5 @@
 import './style.css'
-import { reactive } from 'proxy-reactive-demo';
-import { frameworkInit } from './framework/index';
+import { reactive, startApp } from 'x-framework';
 
 function setup() {
   const data = reactive({
@@ -66,4 +65,6 @@ function setup() {
 
 const app = setup();
 
-frameworkInit('#app', app);
+startApp(document.querySelector('#app'), app, {
+  debug: true
+});

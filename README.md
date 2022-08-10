@@ -8,7 +8,7 @@
 
 ## 基于 Proxy 的数据响应式 Reactive 原理及实现
 
-代码实现在 `src/`
+代码实现在 `packages/reactive`
 
 ```javascript
 
@@ -30,9 +30,11 @@ setInterval(() => {
 ```
 
 
-### 基于响应式系统 100 行代码实现一个迷你前端框架
+### 100 行实现一个迷你前端框架 x-framework
 
-代码实现在 `app-demo/framework`
+框架实现在 `packages/x-framework`
+
+测试代码在 `demo`
 
 实现一个最小版本的 MVVM 框架，展示响应式系统的应用场景
 

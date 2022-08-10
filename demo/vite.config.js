@@ -4,7 +4,7 @@ export default {
   base: './',
   resolve: {
     alias: {
-      'proxy-reactive-demo': join(__dirname, '../dist/src/index.js')
+      'x-framework': join(__dirname, '../dist/x-framework/index.js')
     }
   },
   server: {

@@ -2,11 +2,10 @@
   "name": "proxy-reactive-demo",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "packages/reactive/index.ts",
   "type": "module",
   "scripts": {
-    "dev:demo": "npm run build && cd app-demo && npm run dev",
-    "test": "tsc -d && node dist/test/index.js",
+    "dev:demo": "npm run build && cd demo && npm run dev",
     "build": "tsc -d"
   },
   "author": "nihiue@gmail.com",
