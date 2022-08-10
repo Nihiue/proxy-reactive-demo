@@ -7,12 +7,16 @@ const appStartTime = Date.now();
 const nextTickSubs: Set<Function> = new Set();
 
 setInterval(function() {
-  const arr = Array.from(nextTickSubs);
+  if (nextTickSubs.size === 0) {
+    return;
+  }
+  const effects = Array.from(nextTickSubs);
   nextTickSubs.clear();
 
-  arr.forEach(function (effect) {
-    effect();
-  });
+  for (let i = 0; i < effects.length; i += 1) {
+    effects[i]();
+  }
+
 }, TickInterval);
 
 

@@ -5,10 +5,10 @@ import { bindDOM } from './dom.js';
 export type App = {
   $el ?: HTMLElement,
   mounted ?: Function,
-  methods?: Record<string, Function>,
-  directives: Record<string, Function>,
-  watch: Record<string, Function>,
-  data: Record<string, any>,
+  methods ?: Record<string, Function>,
+  directives ?: Record<string, Function>,
+  watch ?: Record<string, Function>,
+  data ?: Record<string, any>,
 };
 
 export type AppOptions = {
@@ -16,6 +16,7 @@ export type AppOptions = {
 };
 
 export function startApp(rootEl: HTMLElement, app:App, options: AppOptions = {}) {
+  app.$el = rootEl;
   bindHelper(app.methods, app);
   bindHelper(app.directives, app);
   bindHelper(app.watch, app);
@@ -30,7 +31,6 @@ export function startApp(rootEl: HTMLElement, app:App, options: AppOptions = {})
     });
   }
 
-  app.$el = rootEl;
   const renderFuncs = bindDOM(rootEl, app, options);
   renderFuncs.forEach(render => {
     watchEffect(render);

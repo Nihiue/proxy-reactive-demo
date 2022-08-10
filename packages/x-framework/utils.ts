@@ -28,4 +28,3 @@ export function bindHelper(obj: Record<string, any> | undefined, app: App) {
     }
   });
 }
-
