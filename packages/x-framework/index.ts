@@ -3,6 +3,8 @@ import { bindHelper } from './utils.js';
 import { bindDOM } from './dom.js';
 
 export type App = {
+  $el ?: HTMLElement,
+  mounted ?: Function,
   methods?: Record<string, Function>,
   directives: Record<string, Function>,
   watch: Record<string, Function>,
@@ -28,10 +30,15 @@ export function startApp(rootEl: HTMLElement, app:App, options: AppOptions = {})
     });
   }
 
+  app.$el = rootEl;
   const renderFuncs = bindDOM(rootEl, app, options);
   renderFuncs.forEach(render => {
     watchEffect(render);
   });
+
+  if (app.mounted) {
+    app.mounted();
+  }
 }
 
 export { reactive, ref, watchEffect };
