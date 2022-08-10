@@ -5,8 +5,9 @@
   "main": "packages/reactive/index.ts",
   "type": "module",
   "scripts": {
-    "dev:demo": "npm run build && cd demo && npm run dev",
-    "build": "tsc -d"
+    "build": "tsc -d",
+    "dev:demo": "npm run build && vite dev ./demo/",
+    "build:demo": "npm run build && vite build ./demo/"
   },
   "author": "nihiue@gmail.com",
   "license": "ISC",
