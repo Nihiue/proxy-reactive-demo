@@ -15,6 +15,10 @@ export function bindDOM(rootEl: HTMLElement, appThis: App, options: AppOptions) 
 
   const customDirectives = appThis.directives || {};
   const domElements: HTMLElement[] = Array.from(rootEl.querySelectorAll('*'));
+  
+  if (rootEl.nodeName === 'BODY') {
+    domElements.unshift(rootEl);
+  }
 
   const validAttrPrefix = Array.from(attrHandlers.keys());
 
