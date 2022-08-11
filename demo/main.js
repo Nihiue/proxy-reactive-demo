@@ -4,8 +4,9 @@ import { reactive, startApp } from 'x-framework';
 function setup() {
   const data = reactive({
     name: 'guest',
-    birthYear: 1992,
+    birthYear: '1992',
     height: 160,
+    gender: 'male',
     errorReason: '',
     nestedObj: {
       value: 10

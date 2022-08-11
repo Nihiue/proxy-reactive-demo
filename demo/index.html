@@ -46,6 +46,7 @@
         Year of birth:
 
         <!-- x-bind.once -->
+        <!-- x-model="data.birthYear" -->
         <select
           x-bind:value="data.birthYear.toString()"
           x-on:input="data.birthYear=parseInt($event.target.value, 10)"
@@ -60,6 +61,15 @@
           years old.
         </div>
       </div>
+
+      <!-- <div>
+        Gender:
+        <input type="radio" value="male" v-model="data.gender" />
+        <label for="one">Male</label>
+
+        <input type="radio" value="female" v-model="data.gender" />
+        <label for="two">Female</label>
+      </div> -->
 
       <div>
         Height:

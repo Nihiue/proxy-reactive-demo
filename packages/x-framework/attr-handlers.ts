@@ -1,34 +1,29 @@
-import { App } from './index.js';
+import { App } from './app.js';
 import { toCamelcase } from './utils.js';
+import { DOMAttributeHandler, RenderEffect } from './dom.js';
 
-type RenderFunctionOption =  { 
+type EffectOptions =  {
   // args: 新函数的形参
   // body: 新函数的函数体
   // values: 绑定到形参的值
-  args: string[], 
-  body: string, 
-  values: any[] 
+  args: string[],
+  body: string,
+  values: any[]
 }
 
-export type AttrHandler = (
-  appThis: App, 
-  registerRender: Function, 
-  context: { el: HTMLElement, attrName: string, attrValue: string }
-) => void;
-
-function makeRenderFunction({ args , body, values }: RenderFunctionOption, appThis: App): Function {
+function makeRenderEffect({ args , body, values }: EffectOptions, appThis: App): RenderEffect {
   // 这里自动添加了一个新的形参 { methods, data },  并且给其提供值为 appThis
   // 目的是在模板函数中可以不通过 this 直接访问这两个属性，使得模板更加干净
   return new Function('{ methods, data }', ...args, body).bind(appThis, appThis, ...values);
 }
 
-export const attrHandlers: Map<string, AttrHandler> = new Map();
+export const attrHandlers: Map<string, DOMAttributeHandler> = new Map();
 
-attrHandlers.set('x-bind', function (appThis, registerRender, { el, attrName, attrValue }) {
+attrHandlers.set('x-bind', function (appThis, registerEffect, { el, attrName, attrValue }) {
   let [ prefix, propName ] = attrName.split(':');
   propName = toCamelcase(propName);
 
-  const funcOpt: RenderFunctionOption = {
+  const opt: EffectOptions = {
     args: ['$el'],
     body: `$el.${propName} = ${attrValue}`,
     values: [ el ]
@@ -36,7 +31,7 @@ attrHandlers.set('x-bind', function (appThis, registerRender, { el, attrName, at
 
   if (propName === 'class') {
     // 特殊处理 bind:class
-    funcOpt.body = `
+    opt.body = `
       const classDict = ${attrValue};
       Object.keys(classDict).forEach(function (className) {
         $el.classList[classDict[className] ? 'add' : 'remove'](className);
@@ -46,7 +41,7 @@ attrHandlers.set('x-bind', function (appThis, registerRender, { el, attrName, at
 
   if (propName === 'style') {
     // 特殊处理 bind:style
-    funcOpt.body = `
+    opt.body = `
       const styleDict = ${attrValue};
       $el.style = Object.keys(styleDict).map(function (styleName) {
         return styleName + ':' + styleDict[styleName];
@@ -54,18 +49,18 @@ attrHandlers.set('x-bind', function (appThis, registerRender, { el, attrName, at
    `;
   }
 
-  const func = makeRenderFunction(funcOpt, appThis);
+  const effect = makeRenderEffect(opt, appThis);
   if (prefix.includes('.once')) {
-    func();
+    effect();
   } else {
-    registerRender(func, `${attrName} => ${attrValue}`);
+    registerEffect(effect, `${attrName} => ${attrValue}`);
   }
 });
 
-attrHandlers.set('x-on', function (appThis, registerRender, { el, attrName, attrValue }) {
+attrHandlers.set('x-on', function (appThis, registerEffect, { el, attrName, attrValue }) {
   const [ prefix, eventName ] = attrName.split(':');
 
-  const listener:any = makeRenderFunction({
+  const listener:any = makeRenderEffect({
     args: [ '$event' ],
     body: attrValue,
     values: []
@@ -74,22 +69,59 @@ attrHandlers.set('x-on', function (appThis, registerRender, { el, attrName, attr
   el.addEventListener(eventName, listener);
 });
 
-attrHandlers.set('x-show', function (appThis, registerRender, { el, attrName, attrValue }) {
-  const func = makeRenderFunction({
+attrHandlers.set('x-show', function (appThis, registerEffect, { el, attrName, attrValue }) {
+  const effect = makeRenderEffect({
     args: ['$el'],
     body: `$el.style.display = (${attrValue}) ? 'initial' : 'none'`,
     values: [ el ]
   }, appThis);
 
-  registerRender(func, `${attrName} => ${attrValue}`);
+  registerEffect(effect, `${attrName} => ${attrValue}`);
 });
 
-attrHandlers.set('$custom-directive', function (appThis, registerRender, { el, attrName, attrValue }) {
+// attrHandlers.set('x-model', function (appThis, registerEffect, { el, attrName, attrValue }) {
+//   const nodeName = el.nodeName;
+//   const inputType = el.getAttribute('type');
+
+//   let eventName = 'input';
+
+//   let effectOpt:EffectOptions, listenerOpt:EffectOptions;
+
+//   if (nodeName === 'INPUT' && (inputType === 'checkbox' || inputType === 'radio')) {
+//     eventName = 'change';
+//   } else {
+//     // 常规控件
+//     effectOpt = {
+//       args: ['$el'],
+//       body: `$el.value = ${attrValue}`,
+//       values: [ el ]
+//     };
+//     listenerOpt = {
+//       args: [ '$event' ],
+//       body: `${attrValue} = $event.target.value`,
+//       values: []
+//     };
+//     if (nodeName === 'select'){
+//       eventName = 'change';
+//     }
+//   }
+
+
+//   const effect = makeRenderEffect(, appThis);
+
+//   registerEffect(effect, `${attrName} => ${attrValue}`);
+
+//   const listener:any = makeRenderEffect(, appThis);
+
+//   el.addEventListener(eventName, listener);
+// });
+
+attrHandlers.set('$custom-directive', function (appThis, registerEffect, { el, attrName, attrValue }) {
   const directiveName = attrName.slice(2);
-  const func = makeRenderFunction({
+  const effect = makeRenderEffect({
     args: ['$el'],
     body: `this.directives['${directiveName}']($el, { value: ${attrValue} })`,
     values: [ el ]
   }, appThis);
-  registerRender(func, `${attrName} => ${attrValue}`);
+  registerEffect(effect, `${attrName} => ${attrValue}`);
 });

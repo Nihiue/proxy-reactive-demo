@@ -1,5 +1,5 @@
 
-import { App } from './index.js';
+import { App } from './app.js';
 
 export function toCamelcase(str: string): string {
   if (!str.includes('-')) {

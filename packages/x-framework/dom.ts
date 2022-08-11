@@ -1,22 +1,28 @@
-import { App, AppOptions } from './index.js';
-import { attrHandlers, AttrHandler } from './attr-handlers.js';
+import { App, AppOptions } from './app.js';
+import { attrHandlers } from './attr-handlers.js';
 
-type RenderFunction = Function & { effect_debug_info: string };
+export type RenderEffect = Function & { effect_debug_info ?: string };
+
+export type DOMAttributeHandler = (
+  appThis: App,
+  registerEffect: (effect: Function, debugInfo: string) => void,
+  context: { el: HTMLElement, attrName: string, attrValue: string }
+) => void;
 
 export function bindDOM(rootEl: HTMLElement, appThis: App, options: AppOptions) {
-  const renderFuncArray: RenderFunction[] = [];
+  const renderEffects: RenderEffect[] = [];
 
-  function registerRender(func: RenderFunction, desc = '') {
+  function registerEffect(effect: RenderEffect, debugInfo = '') {
     if (options.debug) {
-      func.effect_debug_info = desc;
+      effect.effect_debug_info = debugInfo;
     }
-    renderFuncArray.push(func);
+    renderEffects.push(effect);
   }
 
-  function applyHandler(el: HTMLElement, attrName: string, handler: AttrHandler) {
+  function applyHandler(el: HTMLElement, attrName: string, handler: DOMAttributeHandler) {
     const attrValue = el.getAttribute(attrName) || 'null';
     el.removeAttribute(attrName);
-    handler(appThis, registerRender, {
+    handler(appThis, registerEffect, {
       el,
       attrName,
       attrValue
@@ -25,7 +31,7 @@ export function bindDOM(rootEl: HTMLElement, appThis: App, options: AppOptions) 
 
   const customDirectives = appThis.directives || {};
   const domElements: HTMLElement[] = Array.from(rootEl.querySelectorAll('*'));
-  
+
   if (rootEl.nodeName === 'BODY') {
     domElements.unshift(rootEl);
   }
@@ -49,5 +55,5 @@ export function bindDOM(rootEl: HTMLElement, appThis: App, options: AppOptions) 
     });
   });
 
-  return renderFuncArray;
+  return renderEffects;
 }
