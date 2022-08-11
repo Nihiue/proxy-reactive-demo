@@ -1,5 +1,5 @@
 import { App, AppOptions } from './index.js';
-import { attrHandlers } from './attr-handlers.js';
+import { attrHandlers, AttrHandler } from './attr-handlers.js';
 
 type RenderFunction = Function & { effect_debug_info: string };
 
@@ -11,6 +11,16 @@ export function bindDOM(rootEl: HTMLElement, appThis: App, options: AppOptions) 
       func.effect_debug_info = desc;
     }
     renderFuncArray.push(func);
+  }
+
+  function applyHandler(el: HTMLElement, attrName: string, handler: AttrHandler) {
+    const attrValue = el.getAttribute(attrName) || 'null';
+    el.removeAttribute(attrName);
+    handler(appThis, registerRender, {
+      el,
+      attrName,
+      attrValue
+    });
   }
 
   const customDirectives = appThis.directives || {};
@@ -29,27 +39,12 @@ export function bindDOM(rootEl: HTMLElement, appThis: App, options: AppOptions) 
       }
       validAttrPrefix.some(function(prefix) {
         if (attrName.startsWith(prefix)) {
-          const attrValue = el.getAttribute(attrName) || 'null';
-          const handler = attrHandlers.get(prefix);
-          handler && handler(appThis, registerRender, {
-            el,
-            attrName,
-            attrValue
-          });
-          el.removeAttribute(attrName);
+          applyHandler(el, attrName, attrHandlers.get(prefix));
           return true;
         }
       });
-
       if (customDirectives[attrName.slice(2)]) {
-        const attrValue = el.getAttribute(attrName) || 'null';
-        const handler = attrHandlers.get('$custom-directive');
-        handler && handler(appThis, registerRender, {
-          el,
-          attrName,
-          attrValue
-        });
-        el.removeAttribute(attrName);
+        applyHandler(el, attrName, attrHandlers.get('$custom-directive'));
       }
     });
   });

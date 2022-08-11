@@ -10,7 +10,7 @@ type RenderFunctionOption =  {
   values: any[] 
 }
 
-type AttrHandler = (
+export type AttrHandler = (
   appThis: App, 
   registerRender: Function, 
   context: { el: HTMLElement, attrName: string, attrValue: string }
