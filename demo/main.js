@@ -7,6 +7,7 @@ function setup() {
     birthYear: '1992',
     height: 160,
     gender: 'male',
+    hobby: ['play'],
     errorReason: '',
     nestedObj: {
       value: 10

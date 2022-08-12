@@ -79,42 +79,58 @@ attrHandlers.set('x-show', function (appThis, registerEffect, { el, attrName, at
   registerEffect(effect, `${attrName} => ${attrValue}`);
 });
 
-// attrHandlers.set('x-model', function (appThis, registerEffect, { el, attrName, attrValue }) {
-//   const nodeName = el.nodeName;
-//   const inputType = el.getAttribute('type');
+attrHandlers.set('x-model', function (appThis, registerEffect, { el, attrName, attrValue }) {
+  const nodeName = el.nodeName;
+  const inputType = el.getAttribute('type');
+  const isBindedToArray = Array.isArray(makeRenderEffect({
+    args: [],
+    body: `return ${attrValue}`,
+    values: []
+  }, appThis)());
 
-//   let eventName = 'input';
+  let eventName = 'input';
 
-//   let effectOpt:EffectOptions, listenerOpt:EffectOptions;
+  let effectOpt:EffectOptions = {
+    args: ['$el'],
+    body: `$el.value = ${attrValue}`,
+    values: [ el ]
+  };
+  
+  let listenerOpt:EffectOptions = {
+    args: [ '$el', '$event' ],
+    body: `${attrValue} = $event.target.value`,
+    values: [ el ]
+  };
 
-//   if (nodeName === 'INPUT' && (inputType === 'checkbox' || inputType === 'radio')) {
-//     eventName = 'change';
-//   } else {
-//     // 常规控件
-//     effectOpt = {
-//       args: ['$el'],
-//       body: `$el.value = ${attrValue}`,
-//       values: [ el ]
-//     };
-//     listenerOpt = {
-//       args: [ '$event' ],
-//       body: `${attrValue} = $event.target.value`,
-//       values: []
-//     };
-//     if (nodeName === 'select'){
-//       eventName = 'change';
-//     }
-//   }
+  if (nodeName === 'INPUT' && (inputType === 'checkbox' || inputType === 'radio')) {
+    eventName = 'change';
 
+    effectOpt.body = `$el.checked = (${attrValue} === $el.value)`;
+    listenerOpt.body = `${attrValue} = ($el.checked ? $el.value : '')`;
 
-//   const effect = makeRenderEffect(, appThis);
+    if (isBindedToArray && inputType === 'checkbox') {
+      effectOpt.body = `$el.checked = (${attrValue}.indexOf($el.value) > -1)`;
+      listenerOpt.body = `
+        const valIdx = ${attrValue}.indexOf($el.value);
+        if ($el.checked && valIdx === -1) {
+          ${attrValue}.push($el.value);
+        } else if (!$el.checked && valIdx > -1) {
+          ${attrValue}.splice(valIdx, 1);
+        }
+      `;
+    }
+  } else if (nodeName === 'select'){
+    eventName = 'change';
+  }
 
-//   registerEffect(effect, `${attrName} => ${attrValue}`);
+  const effect = makeRenderEffect(effectOpt, appThis);
 
-//   const listener:any = makeRenderEffect(, appThis);
+  registerEffect(effect, `${attrName} => ${attrValue}`);
 
-//   el.addEventListener(eventName, listener);
-// });
+  const listener:any = makeRenderEffect(listenerOpt, appThis);
+
+  el.addEventListener(eventName, listener);
+});
 
 attrHandlers.set('$custom-directive', function (appThis, registerEffect, { el, attrName, attrValue }) {
   const directiveName = attrName.slice(2);

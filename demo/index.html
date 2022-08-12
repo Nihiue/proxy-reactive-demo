@@ -14,8 +14,7 @@
         <input
           type="text"
           x-focus
-          x-bind:value="data.name"
-          x-on:input="data.name=$event.target.value"
+          x-model="data.name"
         >
       </div>
 
@@ -48,8 +47,7 @@
         <!-- x-bind.once -->
         <!-- x-model="data.birthYear" -->
         <select
-          x-bind:value="data.birthYear.toString()"
-          x-on:input="data.birthYear=parseInt($event.target.value, 10)"
+          x-model="data.birthYear"
           x-bind.once:inner-html="methods.getBirthYearOptions()"
           >
         </select>
@@ -62,14 +60,27 @@
         </div>
       </div>
 
-      <!-- <div>
+      <div>
         Gender:
-        <input type="radio" value="male" v-model="data.gender" />
-        <label for="one">Male</label>
+        <input type="radio" value="male" x-model="data.gender" />
+        <label>Male</label>
 
-        <input type="radio" value="female" v-model="data.gender" />
-        <label for="two">Female</label>
-      </div> -->
+        <input type="radio" value="female" x-model="data.gender" />
+        <label>Female</label>
+      </div>
+
+      <div>
+        Hobby:
+        <input type="checkbox" value="play" x-model="data.hobby" />
+        <label>Play</label>
+
+        <input type="checkbox" value="eat" x-model="data.hobby" />
+        <label>Eat</label>
+
+        <input type="checkbox" value="sleep" x-model="data.hobby" />
+        <label>Sleep</label>
+      </div>
+
 
       <div>
         Height:
