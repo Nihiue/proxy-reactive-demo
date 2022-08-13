@@ -55,7 +55,7 @@
         <div style="margin-top: 20px;">
           Your are
           <!-- methods as computed -->
-          <span x-bind:text-content="methods.calcAge()"></span>
+          <span x-bind:text-content="computed.userAge"></span>
           years old.
         </div>
       </div>
@@ -79,8 +79,13 @@
 
         <input type="checkbox" value="sleep" x-model="data.hobby" />
         <label>Sleep</label>
+        <br/><br/>
+        <select x-model="data.hobby">
+          <option value="play">Play</option>
+          <option value="eat">Eat</option>
+          <option value="sleep">Sleep</option>
+        </select>
       </div>
-
 
       <div>
         Height:

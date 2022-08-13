@@ -15,9 +15,6 @@ function setup() {
   });
 
   const methods = {
-    calcAge() {
-      return (new Date()).getFullYear() - data.birthYear;
-    },
     generateRandomName() {
       data.name = Math.round(Math.random() * 0xfffff).toString(16);
     },
@@ -42,6 +39,12 @@ function setup() {
     }
   };
 
+  const computed = {
+    userAge() {
+      return (new Date()).getFullYear() - data.birthYear;
+    }
+  };
+
   const directives = {
     img(el, binding) {
       if (/img/i.test(el.nodeName)) {
@@ -59,6 +62,7 @@ function setup() {
     data,
     methods,
     watch,
+    computed,
     directives,
   };
 
