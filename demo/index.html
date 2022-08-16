@@ -71,6 +71,8 @@
 
       <div>
         Hobby: <span x-bind:text-Content="data.hobby.join(', ')"></span>
+        <br/><br/>
+
         <input type="checkbox" value="play" x-model="data.hobby" />
         <label>Play</label>
 
@@ -95,8 +97,7 @@
           min="120"
           max="240"
           type="range"
-          x-bind.once:value="data.height"
-          x-on:input="data.height=$event.target.value"
+          x-model="data.height"
         >
         <!-- bind:style -->
         <div

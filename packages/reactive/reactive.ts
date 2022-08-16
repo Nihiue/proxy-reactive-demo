@@ -1,7 +1,8 @@
 
 import { track, trigger } from './track.js';
-import { isObject } from './utils.js';
+import { isObject, isCollection } from './utils.js';
 const proxyMap = new WeakMap();
+const arrayLengthMap = new WeakMap();
 
 function createProxy<T extends object>(obj: T) {
   const proxy = new Proxy<T>(obj, {
@@ -10,13 +11,12 @@ function createProxy<T extends object>(obj: T) {
       return reactive(Reflect.get(target, key, receiver));
     },
     set(target, key, value, receiver) {
-      const lastVal = Reflect.get(target, key, receiver);
-      if (lastVal !== value) {
+      if (Reflect.get(target, key, receiver) !== value) {
         Reflect.set(target, key, value, receiver);
         trigger(target, key);
-      }
-      if (Array.isArray(target) && typeof lastVal === 'undefined') {
-        trigger(target, 'length');
+      } else if (key === 'length' && Array.isArray(target) && arrayLengthMap.get(target) !== value) {
+        arrayLengthMap.set(target, value);
+        trigger(target, key);
       }
       return true;
     }
@@ -27,6 +27,10 @@ function createProxy<T extends object>(obj: T) {
 
 export function reactive<T extends object>(obj: T): T {
   if (!isObject(obj)) {
+    return obj;
+  }
+  if (isCollection(obj)) {
+    console.warn('Collection is not supported yet');
     return obj;
   }
   if (!proxyMap.has(obj)) {
