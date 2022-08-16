@@ -29,6 +29,7 @@ setInterval(() => {
 
 ```
 
+这里只考虑了常规数据结构，对 `Map` 和 `Set` 进行响应式处理比较复杂，暂不支持
 
 ### 100 行实现一个迷你前端框架 x-framework
 
@@ -41,7 +42,7 @@ setInterval(() => {
 目标
 
 - 类 vue API
-- 支持 v-on, v-show, v-bind, v-model 等核心指令
+- 支持 `v-on`, `v-show`, `v-bind`, `v-model` 等核心指令
 - 支持 watch, computed 机制
 - 支持扩展 directive
 
@@ -49,7 +50,7 @@ setInterval(() => {
 
 - vdom 及模板引擎
 - 组件机制
-- v-for 及 v-if 等与 vdom 关系密切的功能
+- `v-for` 及 `v-if` 等与 vdom 关系密切的功能
 
 运行测试应用
 
