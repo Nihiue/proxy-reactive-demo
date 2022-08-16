@@ -133,9 +133,7 @@ attrHandlers.set('x-model', function (appThis, registerEffect, { el, attrName, a
         opt.selected = ${attrValue}.includes(opt.value);
       })`;
       listenerOpt.body = `
-        ${attrValue} = Array.from($el.options).filter(function(opt) {
-          return opt.selected;
-        }).map(function(opt) {
+        ${attrValue} = Array.from($el.selectedOptions).map(function(opt) {
           return opt.value;
         });
       `;

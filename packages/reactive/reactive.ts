@@ -9,10 +9,14 @@ function createProxy<T extends object>(obj: T) {
       track(target, key);
       return reactive(Reflect.get(target, key, receiver));
     },
-    set(target, key, value) {
-      if (Reflect.get(target, key) !== value) {
-        Reflect.set(target, key, value);
+    set(target, key, value, receiver) {
+      const lastVal = Reflect.get(target, key, receiver);
+      if (lastVal !== value) {
+        Reflect.set(target, key, value, receiver);
         trigger(target, key);
+      }
+      if (Array.isArray(target) && typeof lastVal === 'undefined') {
+        trigger(target, 'length');
       }
       return true;
     }

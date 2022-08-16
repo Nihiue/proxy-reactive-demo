@@ -70,7 +70,7 @@
       </div>
 
       <div>
-        Hobby:
+        Hobby: <span x-bind:text-Content="data.hobby.join(', ')"></span>
         <input type="checkbox" value="play" x-model="data.hobby" />
         <label>Play</label>
 
