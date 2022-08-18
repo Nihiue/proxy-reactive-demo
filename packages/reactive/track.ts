@@ -38,14 +38,14 @@ export function trigger(target:Object, key: KeyType) {
   effects.clear();
 }
 
-export function watchEffect(update: any) {
+export function watchEffect(update: any, debug?: boolean) {
   const effect = function () {
     activeEffect = effect;
-    if (update.effect_debug_info) {
+    if (debug) {
       console.debug(
         `+${Math.floor((Date.now() - appStartTime) / 1000)}s`,
         'effect',
-        update.effect_debug_info
+        update.name
       );
     }
     update();

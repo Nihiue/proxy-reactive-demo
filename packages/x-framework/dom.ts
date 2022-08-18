@@ -1,32 +1,27 @@
 import { App, AppOptions } from './app.js';
 import { attrHandlers } from './attr-handlers.js';
 
-export type RenderEffect = Function & { effect_debug_info ?: string };
-
 export type DOMAttributeHandler = (
   appThis: App,
-  registerEffect: (effect: Function, debugInfo: string) => void,
   context: { el: HTMLElement, attrName: string, attrValue: string }
-) => void;
+) => Function | void;
 
 export function bindDOM(rootEl: HTMLElement, appThis: App, options: AppOptions) {
-  const renderEffects: RenderEffect[] = [];
-
-  function registerEffect(effect: RenderEffect, debugInfo = '') {
-    if (options.debug) {
-      effect.effect_debug_info = debugInfo;
-    }
-    renderEffects.push(effect);
-  }
+  const renderEffects: Function[] = [];
 
   function applyHandler(el: HTMLElement, attrName: string, handler: DOMAttributeHandler) {
     const attrValue = el.getAttribute(attrName) || 'null';
     el.removeAttribute(attrName);
-    handler(appThis, registerEffect, {
+
+    const ret = handler(appThis, {
       el,
       attrName,
       attrValue
     });
+    
+    if (ret) {
+      renderEffects.push(ret);
+    }
   }
 
   const customDirectives = appThis.directives || {};

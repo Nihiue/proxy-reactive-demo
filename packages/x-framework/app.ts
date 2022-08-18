@@ -29,27 +29,23 @@ export function startApp(rootEl: HTMLElement, app:App, options: AppOptions = {})
     app.computed = reactive({});
 
     Object.keys(computedFuncs).forEach(function (val) {
-      const func = new Function('computedFuncs', `this.computed['${val}'] = computedFuncs['${val}']()`).bind(app, computedFuncs);
-      if (options.debug) {
-        func.effect_debug_info = `computed => ${val}`;
-      }
-      watchEffect(func);
+      const func = new Function('computedFuncs', `this.computed['${val}'] = computedFuncs['${val}']()`);
+      Object.defineProperty(func, 'name', { value: `computed => ${val}` });
+      watchEffect(func.bind(app, computedFuncs), options.debug);
     });
   }
 
   if (app.watch) {
     Object.keys(app.watch).forEach(function (val) {
-      const func = new Function(`this.watch['${val}'](this.${val})`).bind(app);
-      if (options.debug) {
-        func.effect_debug_info = `watch => ${val}`;
-      }
-      watchEffect(func);
+      const func = new Function(`this.watch['${val}'](this.${val})`);
+      Object.defineProperty(func, 'name', { value: `watch => ${val}` });
+      watchEffect(func.bind(app), options.debug);
     });
   }
 
   const renderEffects = bindDOM(rootEl, app, options);
   renderEffects.forEach(effect => {
-    watchEffect(effect);
+    watchEffect(effect, options.debug);
   });
 
   if (app.mounted) {

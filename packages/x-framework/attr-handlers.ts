@@ -1,6 +1,6 @@
 import { App } from './app.js';
 import { toCamelcase } from './utils.js';
-import { DOMAttributeHandler, RenderEffect } from './dom.js';
+import { DOMAttributeHandler } from './dom.js';
 
 type EffectOptions =  {
   // args: 新函数的形参
@@ -8,13 +8,16 @@ type EffectOptions =  {
   // values: 绑定到形参的值
   args: string[],
   body: string,
-  values: any[]
+  values: any[],
+  name ?: string
 }
 
-function makeFunction({ args , body, values }: EffectOptions, appThis: App): RenderEffect {
+function makeFunction({ args , body, values, name = 'render' }: EffectOptions, appThis: App): Function {
   // 这里自动添加了一个新的形参 { methods, data },  并且给其提供值为 appThis
   // 目的是在模板函数中可以不通过 this 直接访问这两个属性，使得模板更加干净
-  return new Function('{ methods, data, computed }', ...args, body).bind(appThis, appThis, ...values);
+  const func = new Function('{ methods, data, computed }', ...args, body);
+  Object.defineProperty(func, 'name', { value: name });
+  return func.bind(appThis, appThis, ...values);
 }
 
 function resolveValue(name:string, appThis: App) {
@@ -27,11 +30,12 @@ function resolveValue(name:string, appThis: App) {
 
 export const attrHandlers: Map<string, DOMAttributeHandler> = new Map();
 
-attrHandlers.set('x-bind', function (appThis, registerEffect, { el, attrName, attrValue }) {
+attrHandlers.set('x-bind', function (appThis, { el, attrName, attrValue }) {
   let [ prefix, propName ] = attrName.split(':');
   propName = toCamelcase(propName);
 
   const opt: EffectOptions = {
+    name: `${attrName} => ${attrValue}`,
     args: ['$el'],
     body: `$el.${propName} = ${attrValue}`,
     values: [ el ]
@@ -61,14 +65,15 @@ attrHandlers.set('x-bind', function (appThis, registerEffect, { el, attrName, at
   if (prefix.includes('.once')) {
     effect();
   } else {
-    registerEffect(effect, `${attrName} => ${attrValue}`);
+    return effect;
   }
 });
 
-attrHandlers.set('x-on', function (appThis, registerEffect, { el, attrName, attrValue }) {
+attrHandlers.set('x-on', function (appThis, { el, attrName, attrValue }) {
   const [ prefix, eventName ] = attrName.split(':');
 
   const listener:any = makeFunction({
+    name: `event => ${attrValue}`,
     args: [ '$el', '$event' ],
     body: attrValue,
     values: [ el ]
@@ -77,28 +82,29 @@ attrHandlers.set('x-on', function (appThis, registerEffect, { el, attrName, attr
   el.addEventListener(eventName, listener);
 });
 
-attrHandlers.set('x-show', function (appThis, registerEffect, { el, attrName, attrValue }) {
-  const effect = makeFunction({
+attrHandlers.set('x-show', function (appThis, { el, attrName, attrValue }) {
+  return makeFunction({
+    name: `${attrName} => ${attrValue}`,
     args: ['$el'],
     body: `$el.style.display = (${attrValue}) ? 'initial' : 'none'`,
     values: [ el ]
-  }, appThis);
-
-  registerEffect(effect, `${attrName} => ${attrValue}`);
+  }, appThis)
 });
 
-attrHandlers.set('x-model', function (appThis, registerEffect, { el, attrName, attrValue }) {
+attrHandlers.set('x-model', function (appThis, { el, attrName, attrValue }) {
   const nodeName = el.nodeName;
   let eventName = 'input';
   const isBindingArray = Array.isArray(resolveValue(attrValue, appThis));
 
   const effectOpt:EffectOptions = {
+    name: `x-model => ${attrValue}`,
     args: ['$el'],
     body: `$el.value = ${attrValue}`,
     values: [ el ]
   };
 
   const listenerOpt:EffectOptions = {
+    name: `x-model:event => ${attrValue}`,
     args: [ '$el', '$event' ],
     body: `${attrValue} = $el.value`,
     values: [ el ]
@@ -141,20 +147,17 @@ attrHandlers.set('x-model', function (appThis, registerEffect, { el, attrName, a
   }
 
   const effect = makeFunction(effectOpt, appThis);
-
-  registerEffect(effect, `${attrName} => ${attrValue}`);
-
   const listener:any = makeFunction(listenerOpt, appThis);
-
   el.addEventListener(eventName, listener);
+  return effect;
 });
 
-attrHandlers.set('$custom-directive', function (appThis, registerEffect, { el, attrName, attrValue }) {
+attrHandlers.set('$custom-directive', function (appThis, { el, attrName, attrValue }) {
   const directiveName = attrName.slice(2);
-  const effect = makeFunction({
+  return makeFunction({
+    name: `${attrName} => ${attrValue}`,
     args: ['$el'],
     body: `this.directives['${directiveName}']($el, { value: ${attrValue} })`,
     values: [ el ]
   }, appThis);
-  registerEffect(effect, `${attrName} => ${attrValue}`);
 });
