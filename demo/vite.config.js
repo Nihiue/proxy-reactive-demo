@@ -4,7 +4,7 @@ export default {
   base: './',
   resolve: {
     alias: {
-      'x-framework': join(__dirname, '../dist/x-framework/index.js')
+      'x-framework': join(__dirname, '../dist/packages/x-framework/index.js')
     }
   },
   server: {

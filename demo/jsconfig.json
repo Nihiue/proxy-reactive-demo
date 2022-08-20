@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "paths": {
-      "x-framework": ["../dist/x-framework/index"]
+      "x-framework": ["../dist/packages/x-framework/index"]
     }
   }
 }
