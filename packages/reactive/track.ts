@@ -3,11 +3,11 @@ import { getSubscribersSet, KeyType } from './subscribers.js';
 let activeEffect: Function | undefined;
 
 const debugZeroPt = Date.now();
-const nextTickBuffer: Set<Function> = new Set();
+const nextTickSet: Set<Function> = new Set();
 
-function flushNextTickBuffer() {
-  const effects = Array.from(nextTickBuffer);
-  nextTickBuffer.clear();
+function flushTick() {
+  const effects = Array.from(nextTickSet);
+  nextTickSet.clear();
 
   for (let i = 0; i < effects.length; i += 1) {
     effects[i]();
@@ -19,11 +19,11 @@ export function nextTick(effect: Function) {
     throw new Error('invalid function');
   }
 
-  if (nextTickBuffer.size === 0) {
-    setTimeout(flushNextTickBuffer, 30);
+  if (nextTickSet.size === 0) {
+    setTimeout(flushTick, 30);
   }
 
-  nextTickBuffer.add(effect);
+  nextTickSet.add(effect);
 }
 
 export function track(target: Object, key: KeyType) {
@@ -36,11 +36,7 @@ export function track(target: Object, key: KeyType) {
 
 export function trigger(target:Object, key: KeyType) {
   const effects = getSubscribersSet(target, key);
-
-  effects.forEach(function(effect) {
-    nextTick(effect)
-  });
-
+  effects.forEach(nextTick);
   effects.clear();
 }
 
@@ -48,6 +44,7 @@ export function watchEffect(update: any, debug?: boolean) {
   if (typeof update !== 'function') {
     throw new Error('invalid function');
   };
+
   const effect = function () {
     activeEffect = effect;
     if (debug) {
