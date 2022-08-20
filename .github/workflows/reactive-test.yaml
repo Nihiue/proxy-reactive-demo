@@ -2,9 +2,10 @@ name: Reactive Test Suite
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    paths:
+      - 'packages/reactive/**'
+      - 'test/**'
+    branches: [ master ]
 
 jobs:
   build:
