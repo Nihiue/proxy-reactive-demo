@@ -189,3 +189,4 @@ describe('Function test suite', function () {
     strictEqual(depTest.result, 103);
   });
 });
+
