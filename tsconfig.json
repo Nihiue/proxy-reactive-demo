@@ -10,6 +10,7 @@
   },
   "include": [
     "packages/**/*",
+    "test/**/*"
   ],
   "exclude": [
       "node_modules",

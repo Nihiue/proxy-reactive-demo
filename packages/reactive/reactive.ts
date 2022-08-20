@@ -30,7 +30,7 @@ export function reactive<T extends object>(obj: T): T {
     return obj;
   }
   if (isCollection(obj)) {
-    console.warn('Collection is not supported yet');
+    // console.debug('Collection is not supported yet');
     return obj;
   }
   if (!proxyMap.has(obj)) {
@@ -40,7 +40,9 @@ export function reactive<T extends object>(obj: T): T {
 }
 
 export function ref(initVal?: any) {
-  console.assert(!isObject(initVal), 'should not use ref on object');
+  if (isObject(initVal)) {
+    throw new Error('should not use ref on object');
+  }
 
   return reactive({
     value: initVal

@@ -1,8 +1,9 @@
 import { reactive, ref } from './reactive.js';
-import { watchEffect } from './track.js';
+import { watchEffect, nextTick } from './track.js';
 
 export {
   reactive,
   ref,
-  watchEffect
+  watchEffect,
+  nextTick
 };

@@ -2,23 +2,29 @@ import { getSubscribersSet, KeyType } from './subscribers.js';
 
 let activeEffect: Function | undefined;
 
-const TickInterval = 100;
-const appStartTime = Date.now();
-const nextTickSubs: Set<Function> = new Set();
+const debugZeroPt = Date.now();
+const nextTickBuffer: Set<Function> = new Set();
 
-setInterval(function() {
-  if (nextTickSubs.size === 0) {
-    return;
-  }
-  const effects = Array.from(nextTickSubs);
-  nextTickSubs.clear();
+function flushNextTickBuffer() {
+  const effects = Array.from(nextTickBuffer);
+  nextTickBuffer.clear();
 
   for (let i = 0; i < effects.length; i += 1) {
     effects[i]();
   }
+}
 
-}, TickInterval);
+export function nextTick(effect: Function) {
+  if (typeof effect !== 'function') {
+    throw new Error('invalid function');
+  }
 
+  if (nextTickBuffer.size === 0) {
+    setTimeout(flushNextTickBuffer, 30);
+  }
+
+  nextTickBuffer.add(effect);
+}
 
 export function track(target: Object, key: KeyType) {
   if (!activeEffect) {
@@ -32,18 +38,21 @@ export function trigger(target:Object, key: KeyType) {
   const effects = getSubscribersSet(target, key);
 
   effects.forEach(function(effect) {
-    nextTickSubs.add(effect);
+    nextTick(effect)
   });
 
   effects.clear();
 }
 
 export function watchEffect(update: any, debug?: boolean) {
+  if (typeof update !== 'function') {
+    throw new Error('invalid function');
+  };
   const effect = function () {
     activeEffect = effect;
     if (debug) {
       console.debug(
-        `+${Math.floor((Date.now() - appStartTime) / 1000)}s`,
+        `+${Math.floor((Date.now() - debugZeroPt) / 1000)}s`,
         'effect',
         update.name
       );
