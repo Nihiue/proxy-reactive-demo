@@ -37,7 +37,7 @@ describe('API test suite', function () {
     notStrictEqual(obj, reactive(obj));
   });
 
-  it('should reactive ignore other value types', async function() {
+  it('should reactive ignore unsupported types', async function() {
     const set =  new Set();
     const map = new Map();
     const func = () => {};
@@ -45,6 +45,12 @@ describe('API test suite', function () {
     strictEqual(set, reactive(set));
     strictEqual(map, reactive(map));
     strictEqual(func, reactive(func));
+  });
+
+  it('should reactive keep reactive values', async function() {
+    const r = reactive({});
+    strictEqual(r, reactive(r));
+    strictEqual(r, reactive(reactive(r)));
   });
 });
 
@@ -190,3 +196,44 @@ describe('Function test suite', function () {
   });
 });
 
+describe('Performance test suite', function () {
+  const ArrSize = 0xffff;
+
+  function mixTest(arr: number[]) {
+    for (let i = 0; i < ArrSize; i += 1) {
+      arr.push(arr[arr.length - 1] + arr[i] + 1);
+    }
+    for (let i = ArrSize - 2 * 0xff; i < 0xff; i += 1) {
+      arr.splice(i * 2, 2, 1);
+    }
+  }
+
+  function getData() {
+    return (new Array(ArrSize)).fill(1);
+  }
+
+  function getReader(data: number[]) {
+    return function() {
+      for (let i = 0; i < data.length; i += 1) {
+        if (data[i] === i) {
+          data[i] = - data[i];
+        }
+      }
+    }
+  }
+
+  it('reference performance', async () => {
+    const data = getData();
+    getReader(data)();
+    mixTest(data);
+    await waitForTick();
+  });
+
+  it('reactive performance', async () => {
+    
+    const data = reactive(getData());
+    watchEffect(getReader(data));
+    mixTest(data);
+    await waitForTick();
+  });
+});
