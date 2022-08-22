@@ -6,7 +6,8 @@ on:
       - 'packages/reactive/**'
       - 'test/**'
     branches: [ master ]
-
+  workflow_dispatch:
+  
 jobs:
   build:
 
