@@ -9,51 +9,43 @@ export const KEYS = {
   GET_RAW: '_x_get_raw_object'
 };
 
-function createProxy<T extends object>(obj: T) {
-  const proxy = new Proxy<T>(obj, {
-    get(target, key, receiver) {
-      if (key === KEYS.IS_REACTIVE) {
-        return true;
-      }
-      if (key === KEYS.GET_RAW) {
-        return target;
-      }
-      track(target, key);
-      return reactive(Reflect.get(target, key, receiver));
-    },
-    set(target, key, value, receiver) {
-      if (Reflect.get(target, key, receiver) !== value) {
-        Reflect.set(target, key, value, receiver);
-        trigger(target, key);
-      } else if (key === 'length' && Array.isArray(target) && arraySizeMap.get(target) !== value) {
-        arraySizeMap.set(target, value);
-        trigger(target, key);
-      }
+const defaultHandler: ProxyHandler<object> = {
+  get(target, key, receiver) {
+    if (key === KEYS.IS_REACTIVE) {
       return true;
     }
-  });
-  proxyMap.set(obj, proxy);
-  return proxy;
-}
+    if (key === KEYS.GET_RAW) {
+      return target;
+    }
+    track(target, key);
+    return reactive(Reflect.get(target, key, receiver));
+  },
+  set(target, key, value, receiver) {
+    if (Reflect.get(target, key, receiver) !== value) {
+      Reflect.set(target, key, value, receiver);
+      trigger(target, key);
+    } else if (key === 'length' && Array.isArray(target) && arraySizeMap.get(target) !== value) {
+      arraySizeMap.set(target, value);
+      trigger(target, key);
+    }
+    return true;
+  }
+};
 
-export function reactive<T extends object>(obj: T): T {
-  if (!isObject(obj)) {
-    return obj;
+export function reactive<T extends object>(target: T): T {
+  if (
+    !isObject(target) || 
+    Reflect.get(target, KEYS.IS_REACTIVE) || 
+    isCollection(target)
+  ) {
+    return target;
+  } 
+  
+  if (!proxyMap.has(target)) {
+    proxyMap.set(target, new Proxy<T>(target, defaultHandler));
   }
 
-  if (Reflect.get(obj, KEYS.IS_REACTIVE)) {
-    return obj;
-  }
-
-  if (isCollection(obj)) {
-    // console.debug('Collection is not supported yet');
-    return obj;
-  }
- 
-  if (!proxyMap.has(obj)) {
-    proxyMap.set(obj, createProxy(obj));
-  }
-  return proxyMap.get(obj);
+  return proxyMap.get(target);
 }
 
 export function ref(initVal?: any) {
