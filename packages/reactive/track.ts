@@ -1,4 +1,5 @@
 import { getSubscribersSet, KeyType } from './subscribers.js';
+import { isFunction } from './utils.js';
 
 let activeEffect: Function | undefined;
 
@@ -15,7 +16,7 @@ function flushTick() {
 }
 
 export function nextTick(effect: Function) {
-  if (typeof effect !== 'function') {
+  if (!isFunction(effect)) {
     throw new Error('invalid function');
   }
 
@@ -41,7 +42,7 @@ export function trigger(target:Object, key: KeyType) {
 }
 
 export function watchEffect(update: any, debug?: boolean) {
-  if (typeof update !== 'function') {
+  if (!isFunction(update)) {
     throw new Error('invalid function');
   };
 

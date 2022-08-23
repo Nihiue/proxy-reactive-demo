@@ -30,11 +30,27 @@ describe('API test suite', function () {
     });
   });
 
+  it('should watchEffect print debug info', async function() {
+    watchEffect(function debug() {}, true);
+  });
+
+  it('should nextTick rejects non-function', async function() {
+    throws(() => {
+      nextTick([] as any);
+    });
+  });
+
   it('should reactive wrap object and array', async function() {
     const arr = [ 1, 2 ];
     const obj = { foo: 1 };
-    notStrictEqual(arr, reactive(arr));
-    notStrictEqual(obj, reactive(obj));
+    const rArr:any = reactive(arr);
+    const rObj:any = reactive(obj);
+
+    notStrictEqual(arr, rArr);
+    notStrictEqual(obj, rObj);
+
+    strictEqual(rArr['_x_get_raw_object'], arr);
+    strictEqual(rObj['_x_get_raw_object'], obj);
   });
 
   it('should reactive ignore unsupported types', async function() {
@@ -203,7 +219,7 @@ describe('Performance test suite', function () {
     for (let i = 0; i < ArrSize; i += 1) {
       arr.push(arr[arr.length - 1] + arr[i] + 1);
     }
-    for (let i = ArrSize - 2 * 0xff; i < 0xff; i += 1) {
+    for (let i = ArrSize - 2 * 0xff; i < ArrSize; i += 1) {
       arr.splice(i * 2, 2, 1);
     }
   }
