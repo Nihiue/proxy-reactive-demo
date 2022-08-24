@@ -9,3 +9,7 @@ export function isFunction(val:unknown): val is Function {
 export function isCollection(val: unknown) {
   return val instanceof Map || val instanceof WeakMap || val instanceof Set || val instanceof WeakSet;
 }
+
+export function isPromise(val:unknown): val is Promise<any> {
+  return val instanceof Promise;
+}

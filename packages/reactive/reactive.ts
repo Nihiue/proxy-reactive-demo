@@ -1,20 +1,20 @@
 
 import { track, trigger } from './track.js';
-import { isObject, isCollection } from './utils.js';
+import { isObject, isCollection, isPromise } from './utils.js';
 const proxyMap = new WeakMap();
 const arraySizeMap = new WeakMap();
 
-export const KEYS = {
-  IS_REACTIVE: '_x_is_reactive',
-  GET_RAW: '_x_get_raw_object'
+export const SYMBOLS = {
+  IS_REACTIVE: Symbol('IS_REACTIVE'),
+  GET_RAW: Symbol('GET_RAW'),
 };
 
 const defaultHandler: ProxyHandler<object> = {
   get(target, key, receiver) {
-    if (key === KEYS.IS_REACTIVE) {
+    if (key === SYMBOLS.IS_REACTIVE) {
       return true;
     }
-    if (key === KEYS.GET_RAW) {
+    if (key === SYMBOLS.GET_RAW) {
       return target;
     }
     track(target, key);
@@ -35,7 +35,8 @@ const defaultHandler: ProxyHandler<object> = {
 export function reactive<T extends object>(target: T): T {
   if (
     !isObject(target) || 
-    Reflect.get(target, KEYS.IS_REACTIVE) || 
+    Reflect.get(target, SYMBOLS.IS_REACTIVE) || 
+    isPromise(target) ||
     isCollection(target)
   ) {
     return target;

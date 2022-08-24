@@ -1,4 +1,4 @@
-import { reactive, ref, watchEffect, nextTick } from '../packages/reactive/index.js';
+import { reactive, ref, watchEffect, nextTick, SYMBOLS } from '../packages/reactive/index.js';
 import { equal, strictEqual, throws, notStrictEqual } from 'node:assert';
 
 function waitForTick() {
@@ -11,7 +11,9 @@ describe('API test suite', function () {
   it('should ref accepts primitive values', async function() {
     const r = ref(1);
     strictEqual(r.value, 1);
-    return true;
+
+    const symbol = Symbol('test');
+    strictEqual(ref(symbol).value, symbol);
   });
 
   it('should ref rejects non-primitive values', async function() {
@@ -27,6 +29,12 @@ describe('API test suite', function () {
   it('should watchEffect rejects non-function', async function() {
     throws(() => {
       watchEffect([]);
+    });
+  });
+
+  it('should watchEffect rejects async function', async function() {
+    throws(() => {
+      watchEffect(async function() {});
     });
   });
 
@@ -49,18 +57,23 @@ describe('API test suite', function () {
     notStrictEqual(arr, rArr);
     notStrictEqual(obj, rObj);
 
-    strictEqual(rArr['_x_get_raw_object'], arr);
-    strictEqual(rObj['_x_get_raw_object'], obj);
+    strictEqual(rArr[SYMBOLS.GET_RAW], arr);
+    strictEqual(rObj[SYMBOLS.GET_RAW], obj);
+
+    strictEqual(rObj[SYMBOLS.IS_REACTIVE], true);
+    strictEqual(rObj[SYMBOLS.IS_REACTIVE], true);
   });
 
   it('should reactive ignore unsupported types', async function() {
     const set =  new Set();
     const map = new Map();
     const func = () => {};
+    const promise = new Promise(() => {});
 
     strictEqual(set, reactive(set));
     strictEqual(map, reactive(map));
     strictEqual(func, reactive(func));
+    strictEqual(promise, reactive(promise));
   });
 
   it('should reactive keep reactive values', async function() {
