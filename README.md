@@ -1,12 +1,15 @@
 # Proxy Reactive Demo
 
-这是一次技术分享的代码 Repo
 
-设计主要参照了 vue3 的响应式原理文档，相较于官方文档，会更注重探究设计背后的思路以及一些关键的细节
+![typescript](https://img.shields.io/npm/types/scrub-js.svg)
+[![Test Suite](https://github.com/Nihiue/proxy-reactive-demo/actions/workflows/reactive-test.yaml/badge.svg)](https://github.com/Nihiue/proxy-reactive-demo/actions/workflows/reactive-test.yaml)
 
-[PDF版本讲义](https://github.com/Nihiue/proxy-reactive-demo/blob/master/doc/doc.pdf)
+这是一次内部技术分享的代码 [讲义](https://www.feishu.cn/docx/doxcnCtKBC8caG3t2uyr1OkBlXd)
+
 
 ## 基于 Proxy 的数据响应式 Reactive 原理及实现
+
+主要参照了 vue3 的响应式原理文档，相较于官方文档，会更注重探究设计背后的思路以及一些关键的细节
 
 代码实现在 `packages/reactive`
 
@@ -31,7 +34,8 @@ setInterval(() => {
 
 这里只考虑了常规数据结构，对 `Map` 和 `Set` 进行响应式处理比较复杂，暂不支持
 
-### 100 行实现一个迷你前端框架 x-framework
+
+## 100 行实现一个迷你前端框架 x-framework
 
 框架实现在 `packages/x-framework`
 
@@ -39,7 +43,7 @@ setInterval(() => {
 
 实现一个最小版本的 MVVM 框架，展示响应式系统的应用场景
 
-目标
+### 目标
 
 - 类 vue API
 - 支持 `v-on`, `v-show`, `v-bind`, `v-model` 等核心指令
@@ -52,7 +56,7 @@ setInterval(() => {
 - 组件机制
 - `v-for` 及 `v-if` 等与 vdom 关系密切的功能
 
-运行测试应用
+### 运行测试应用
 
 ```bash
 

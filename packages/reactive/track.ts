@@ -1,5 +1,5 @@
 import { getSubscribersSet, KeyType } from './subscribers.js';
-import { isFunction, isPromise, isAsyncFunction } from './utils.js';
+import { isFunction, isAsyncFunction } from './utils.js';
 
 let activeEffect: Function | undefined;
 
