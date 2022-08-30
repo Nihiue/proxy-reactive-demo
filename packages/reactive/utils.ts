@@ -6,6 +6,10 @@ export function isFunction(val:unknown): val is Function {
   return typeof val === 'function';
 }
 
+export function isAsyncFunction(val: Function) {
+  return val.constructor.name === 'AsyncFunction';
+}
+
 export function isCollection(val: unknown) {
   return val instanceof Map || val instanceof WeakMap || val instanceof Set || val instanceof WeakSet;
 }

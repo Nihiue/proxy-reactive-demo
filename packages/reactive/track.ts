@@ -1,5 +1,5 @@
 import { getSubscribersSet, KeyType } from './subscribers.js';
-import { isFunction, isPromise } from './utils.js';
+import { isFunction, isPromise, isAsyncFunction } from './utils.js';
 
 let activeEffect: Function | undefined;
 
@@ -47,7 +47,11 @@ export function watchEffect(update: any, debug?: boolean) {
     throw new Error('invalid function');
   };
 
-  const effect = function () {
+  if (isAsyncFunction(update)) {
+    throw new Error(`async function is not supported by watchEffect`);
+  }
+
+  function wrappedEffect() {
     if (debug) {
       console.debug(
         `+${Math.floor((Date.now() - debugZeroPt) / 1000)}s`,
@@ -55,16 +59,10 @@ export function watchEffect(update: any, debug?: boolean) {
         update.name
       );
     }
-
-    activeEffect = effect;
-    const retVal = update();
+    activeEffect = wrappedEffect;
+    update();
     activeEffect = undefined;
-    return retVal;
   }
-
-  if (isPromise(effect())) {
-    throw new Error(`async function is not supported by watchEffect`);
-  }
-  
-  return effect;
+  wrappedEffect();
+  return wrappedEffect;
 }
