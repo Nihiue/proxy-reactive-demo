@@ -5,6 +5,7 @@ let activeEffect: Function | undefined;
 
 const debugZeroPt = Date.now();
 const nextTickSet: Set<Function> = new Set();
+const tickRunner = globalThis.requestAnimationFrame || setImmediate;
 
 function flushTick() {
   const effects = Array.from(nextTickSet);
@@ -21,7 +22,7 @@ export function nextTick(effect: Function) {
   }
 
   if (nextTickSet.size === 0) {
-    setTimeout(flushTick, 30);
+    tickRunner(flushTick);
   }
 
   nextTickSet.add(effect);
