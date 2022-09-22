@@ -86,7 +86,7 @@ attrHandlers.set('x-show', function (appThis, { el, attrName, attrValue }) {
   return makeFunction({
     name: `${attrName} => ${attrValue}`,
     args: ['$el'],
-    body: `$el.style.display = (${attrValue}) ? 'initial' : 'none'`,
+    body: `$el.style.contentVisibility = (${attrValue}) ? 'visible' : 'hidden'`,
     values: [ el ]
   }, appThis)
 });
