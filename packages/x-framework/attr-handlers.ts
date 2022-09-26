@@ -83,10 +83,16 @@ attrHandlers.set('x-on', function (appThis, { el, attrName, attrValue }) {
 });
 
 attrHandlers.set('x-show', function (appThis, { el, attrName, attrValue }) {
+  let body = `$el.style.display = (${attrValue}) ? '' : 'none'`;
+
+  if (CSS.supports('content-visibility: visible')) {
+    body = `$el.style.contentVisibility = (${attrValue}) ? 'visible' : 'hidden'`;
+  }
+
   return makeFunction({
     name: `${attrName} => ${attrValue}`,
     args: ['$el'],
-    body: `$el.style.contentVisibility = (${attrValue}) ? 'visible' : 'hidden'`,
+    body: body,
     values: [ el ]
   }, appThis)
 });
