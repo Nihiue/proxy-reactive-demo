@@ -4,7 +4,7 @@
 ![typescript](https://img.shields.io/npm/types/scrub-js.svg)
 [![Test Suite](https://github.com/Nihiue/proxy-reactive-demo/actions/workflows/reactive-test.yaml/badge.svg)](https://github.com/Nihiue/proxy-reactive-demo/actions/workflows/reactive-test.yaml)
 
-这是一次内部技术分享的代码 [讲义](https://www.feishu.cn/docx/doxcnCtKBC8caG3t2uyr1OkBlXd)
+这是一次内部技术分享的代码 [讲义](https://rmz46ujgbm.feishu.cn/docx/doxcnAuHjEFuAdMBT6WTyrGhQjg)
 
 
 ## 基于 Proxy 的数据响应式 Reactive 原理及实现
